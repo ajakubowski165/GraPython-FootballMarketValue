@@ -47,7 +47,7 @@ print(df)
 
 print(df['Values'][230])
 print(df['Values'][231])
-print(df['Values'][230] == df['Values'][231])
+print(df['Values'][230] == df['Values'][231] and 1==1)
 
 
 #pusta lista wykluczonych wartosci
@@ -79,7 +79,7 @@ while len(excluded_values) < len(df['Players']): #dopóki nie wyczerpie sie licz
         continue
 
     #sprawdzenie wyboru
-    if (choice == "D" and df["Values"][x] < df["Values"][y]) or (choice == "S" and df["Values"][x] == df["Values"][y]) or (choice == "T" and df["Values"][x] > df["Values"][y]): #jesli dobry wybor
+    if (choice == "D" and df["Values"][x] < df["Values"][y]) or (choice == "S" and (df["Values"][x] == df["Values"][y])) or (choice == "T" and df["Values"][x] > df["Values"][y]): #jesli dobry wybor
         points += 1
         print("Zdobywasz punkt! " + df['Players'][y] + " jest warty " + df['Values'][y] + " Twoja ilosc punktow to: " + str(points) + "\n")
     else: #jesli zly wybor
