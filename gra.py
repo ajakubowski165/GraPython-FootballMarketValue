@@ -3,8 +3,9 @@
 #requests i bs4 do web scrappingu
 import requests
 from bs4 import BeautifulSoup
-#pandas do dataframe
-import pandas as pd
+import pandas as pd #do dataframe
+import random #do losowania
+
 
 
 #__________POBRANIE I OBROBKA DANYCH
@@ -17,6 +18,7 @@ headers = {'User-Agent':
 #tworzymy puste listy pilkarzy oraz ich wartosci
 PlayersList = []
 ValuesList = []
+NationalitiesList = []
 
 
 #wybieramy strone do analizy
@@ -34,10 +36,43 @@ for pagenum in range(1, 11):
         PlayersList.append(Players[i].text)
     for i in range(0,25):
         ValuesList.append(Values[i].text)
+ 
 
 
 #tworzymy ramke danych
 df = pd.DataFrame({"Players":PlayersList,"Values":ValuesList})
 
-#wyswietlamy dane
-print(df.head(400))
+#wyswietlamy dane dla sprawdzenia
+print(df)
+
+#pusta lista wykluczonych wartosci
+excluded_values = []
+points = 0
+rounds = 1
+
+#algorytm gry
+while len(excluded_values) < len(df['Players']): #dopóki nie wyczerpie sie liczba wykorzystanych zawodników
+    
+    x = random.randint(0, len(df['Players']) - 1) #losujemy liczbe
+    excluded_values.append(x) #dopisujemy wylosowaną liczbe do liczb wykluczonych
+    
+    y = random.randint(0, len(df['Players']) - 1) #losujemy drugą liczbe
+    excluded_values.append(y) #dopisujemy do wykluczonych
+    
+    print("--------- RUNDA " + str(rounds) + " ---------")
+    print(df['Players'][x] + " " + df['Values'][x] + "   vs.   " + df['Players'][y] + " ??? mln € ")
+    print("Czy " + df["Players"][y] + " jest drozszy (D)/ tanszy (T)/ ma taka sama wartosc (S) jak " + df["Players"][x])
+
+    choice = input() 
+    while choice not in ["S","D","T"]:
+        print("Wybierz S/D/T")
+        choice = input()
+
+    if (choice == "D" and df["Values"][x] > df["Values"][y]) or (choice == "S" and df["Values"][x] == df["Values"][y]) or (choice == "T" and df["Values"][x] < df["Values"][y]): #jesli dobry wybor
+        points += 1
+        print("Zdobywasz punkt! " + df['Players'][y] + " jest warty " + df['Values'][x] + " Twoja ilosc punktow to: " + str(points) + "\n")
+    else: #jesli zly wybor
+        print("Nie zdobywasz punktu. " + df['Players'][y] + " jest warty " + df['Values'][x] + " Twoja ilość punktów to: " + str(points) + "\n")
+    
+    rounds += 1
+
