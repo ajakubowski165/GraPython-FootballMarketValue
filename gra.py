@@ -45,6 +45,11 @@ df = pd.DataFrame({"Players":PlayersList,"Values":ValuesList})
 #wyswietlamy dane dla sprawdzenia
 print(df)
 
+print(df['Values'][230])
+print(df['Values'][231])
+print(df['Values'][230] == df['Values'][231])
+
+
 #pusta lista wykluczonych wartosci
 excluded_values = []
 points = 0
@@ -59,20 +64,30 @@ while len(excluded_values) < len(df['Players']): #dopóki nie wyczerpie sie licz
     y = random.randint(0, len(df['Players']) - 1) #losujemy drugą liczbe
     excluded_values.append(y) #dopisujemy do wykluczonych
     
+    #numer rundy, zawodnicy w niej wystepujacy oraz instrukcja wyboru
     print("--------- RUNDA " + str(rounds) + " ---------")
     print(df['Players'][x] + " " + df['Values'][x] + "   vs.   " + df['Players'][y] + " ??? mln € ")
     print("Czy " + df["Players"][y] + " jest drozszy (D)/ tanszy (T)/ ma taka sama wartosc (S) jak " + df["Players"][x])
 
+    #obsluga bledu wyboru
     choice = input() 
-    while choice not in ["S","D","T"]:
+    while True:
+        if choice in ["S", "D", "T"]:
+            break
         print("Wybierz S/D/T")
         choice = input()
+        continue
 
-    if (choice == "D" and df["Values"][x] > df["Values"][y]) or (choice == "S" and df["Values"][x] == df["Values"][y]) or (choice == "T" and df["Values"][x] < df["Values"][y]): #jesli dobry wybor
+    #sprawdzenie wyboru
+    if (choice == "D" and df["Values"][x] < df["Values"][y]) or (choice == "S" and df["Values"][x] == df["Values"][y]) or (choice == "T" and df["Values"][x] > df["Values"][y]): #jesli dobry wybor
         points += 1
-        print("Zdobywasz punkt! " + df['Players'][y] + " jest warty " + df['Values'][x] + " Twoja ilosc punktow to: " + str(points) + "\n")
+        print("Zdobywasz punkt! " + df['Players'][y] + " jest warty " + df['Values'][y] + " Twoja ilosc punktow to: " + str(points) + "\n")
     else: #jesli zly wybor
-        print("Nie zdobywasz punktu. " + df['Players'][y] + " jest warty " + df['Values'][x] + " Twoja ilość punktów to: " + str(points) + "\n")
+        print("Nie zdobywasz punktu. " + df['Players'][y] + " jest warty " + df['Values'][y] + " Twoja ilość punktów to: " + str(points) + "\n")
     
     rounds += 1
 
+
+#najlepszy wynik
+#maksymalna ilosc rund
+#gracze
