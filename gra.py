@@ -38,16 +38,11 @@ for pagenum in range(1, 11):
         ValuesList.append(Values[i].text)
  
 
-
 #tworzymy ramke danych
 df = pd.DataFrame({"Players":PlayersList,"Values":ValuesList})
 
 #wyswietlamy dane dla sprawdzenia
 print(df)
-
-print(df['Values'][230])
-print(df['Values'][231])
-print(df['Values'][230] == df['Values'][231] and 1==1)
 
 
 #pusta lista wykluczonych wartosci
@@ -59,9 +54,13 @@ rounds = 1
 while len(excluded_values) < len(df['Players']): #dopóki nie wyczerpie sie liczba wykorzystanych zawodników
     
     x = random.randint(0, len(df['Players']) - 1) #losujemy liczbe
+    while x in excluded_values: #jesli x znajduje sie w wykluczonych liczbach
+        x = random.randint(0, len(df['Players']) - 1) #losujemy ponownie
     excluded_values.append(x) #dopisujemy wylosowaną liczbe do liczb wykluczonych
     
     y = random.randint(0, len(df['Players']) - 1) #losujemy drugą liczbe
+    while y in excluded_values: #jesli y znajduje sie w wykluczonych liczbach
+        y = random.randint(0, len(df['Players']) - 1) #losujemy ponownie
     excluded_values.append(y) #dopisujemy do wykluczonych
     
     #numer rundy, zawodnicy w niej wystepujacy oraz instrukcja wyboru
@@ -71,12 +70,9 @@ while len(excluded_values) < len(df['Players']): #dopóki nie wyczerpie sie licz
 
     #obsluga bledu wyboru
     choice = input() 
-    while True:
-        if choice in ["S", "D", "T"]:
-            break
+    while choice not in ["S","D","T"]:
         print("Wybierz S/D/T")
         choice = input()
-        continue
 
     #sprawdzenie wyboru
     if (choice == "D" and df["Values"][x] < df["Values"][y]) or (choice == "S" and (df["Values"][x] == df["Values"][y])) or (choice == "T" and df["Values"][x] > df["Values"][y]): #jesli dobry wybor
@@ -88,6 +84,11 @@ while len(excluded_values) < len(df['Players']): #dopóki nie wyczerpie sie licz
     rounds += 1
 
 
+# SPRÓBUJ STARĄ OBSŁUGE BŁĘDÓW! KASUJĄCY SIE ZAWODNICY
+
+#kasujacy sie zawodnicy
 #najlepszy wynik
 #maksymalna ilosc rund
 #gracze
+#stop gry
+
