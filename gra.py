@@ -40,11 +40,15 @@ for pagenum in range(1, 11):
 #tworzymy ramke danych
 df = pd.DataFrame({"Players":PlayersList,"Values":ValuesList})
 
+# Usunięcie zbędnych znaków i konwersja na typ int
+df['Values'] = df['Values'].str.replace(' mln €', '').str.replace(',', '.').astype(float).astype(int)
 
 #wyswietlamy dane dla sprawdzenia
-print(df)
+print(df['Values'][1]<df['Values'][249])
 
 
+
+'''
 #algorytm gry - nagła śmierć
 #pusta lista wykluczonych wartosci
 excluded_values = []
@@ -148,3 +152,4 @@ while len(excluded_values) < len(df['Players']): #dopóki nie wyczerpie sie licz
 #gracze
 #stop gry
 
+'''
