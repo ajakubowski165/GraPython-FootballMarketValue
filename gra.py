@@ -7,7 +7,6 @@ import pandas as pd #do dataframe
 import random #do losowania
 
 
-
 #__________POBRANIE I OBROBKA DANYCH
 
 #pokazujemy, ze dzialamy jako przegladarka
@@ -43,12 +42,8 @@ df = pd.DataFrame({"Players":PlayersList,"Values":ValuesList})
 # Usunięcie zbędnych znaków i konwersja na typ int
 df['Values'] = df['Values'].str.replace(' mln €', '').str.replace(',', '.').astype(float).astype(int)
 
-#wyswietlamy dane dla sprawdzenia
-print(df['Values'][1]<df['Values'][249])
 
 
-
-'''
 #algorytm gry - nagła śmierć
 #pusta lista wykluczonych wartosci
 excluded_values = []
@@ -69,9 +64,9 @@ while len(excluded_values) < len(df['Players']): #dopóki nie wyczerpie sie licz
     excluded_values.append(y) #dopisujemy do wykluczonych
     
 
-    #numer rundy, zawodnicy w niej wystepujacy oraz instrukcja wyboru
-    print("--------- RUNDA " + str(rounds) + " --------- Kolej gracza: " + str(player))
-    print(df['Players'][x] + " " + df['Values'][x] + "   vs.   " + df['Players'][y] + " ??? mln € ")
+    #numer rundy oraz instrukcja wyboru
+    print("--------- RUNDA " + str(rounds))
+    print(df['Players'][x] + " " + str(df['Values'][x]) + " mln €   vs.   " + df['Players'][y] + " ??? mln € ")
     print("Czy " + df["Players"][y] + " jest drozszy (D)/ tanszy (T)/ ma taka sama wartosc (S) jak " + df["Players"][x])
 
 
@@ -85,31 +80,42 @@ while len(excluded_values) < len(df['Players']): #dopóki nie wyczerpie sie licz
     #sprawdzenie wyboru
     if (choice == "D" and df["Values"][x] < df["Values"][y]) or (choice == "S" and (df["Values"][x] == df["Values"][y])) or (choice == "T" and df["Values"][x] > df["Values"][y]): #jesli dobry wybor
         points += 1
-        print("Zdobywasz punkt! " + df['Players'][y] + " jest warty " + df['Values'][y] + " Twoja ilosc punktow to: " + str(points) + "\n")
+        print("Zdobywasz punkt! " + df['Players'][y] + " jest warty " + str(df['Values'][y]) + " mln €. Twoja ilosc punktow to: " + str(points) + "\n")
     else: #jesli zly wybor
-        print("Koniec gry :( " + df['Players'][y] + " jest warty " + df['Values'][y] + " Zdobyles lacznie: " + str(points) + " punktow\n")
+        print("Koniec gry :( " + df['Players'][y] + " jest warty " + str(df['Values'][y]) + " mln €. Zdobyles lacznie: " + str(points) + " punktow\n")
         break
     
     rounds += 1
     i += 1
 
 
+
 #algorytm gry - rundy i gracze
 excluded_values = []
-points = 0
 rounds = 1
-i=0
+i = 0
 
 
-rounds_choice = int(input('Wpisz liczbe rund od 1 do 50'))
+rounds_choice = int(input('Wpisz liczbe rund od 1 do 50: '))
 
 while rounds_choice not in range(1, 51):
     print("Liczba nie należy do przedziału 1-50")
     rounds_choice = int(input("Podaj inną liczbę: "))
 
+
+num_players = int(input('Wpisz liczbe graczy od 2 do 10: '))
+
+while num_players not in range(2, 11):
+    print("Liczba nie należy do przedziału 2-10")
+    num_players = int(input("Podaj inną liczbę: "))
+
+
+points = [0] * num_players
+
+
 while len(excluded_values) < len(df['Players']): #dopóki nie wyczerpie sie liczba wykorzystanych zawodników
 
-    player = (i % (4)) + 1
+    player = (i % (num_players)) + 1
 
     x = random.randint(0, len(df['Players']) - 1) #losujemy liczbe
     while x in excluded_values: #jesli x znajduje sie w wykluczonych liczbach
@@ -123,7 +129,7 @@ while len(excluded_values) < len(df['Players']): #dopóki nie wyczerpie sie licz
     
     #numer rundy, zawodnicy w niej wystepujacy oraz instrukcja wyboru
     print("--------- RUNDA " + str(rounds) + " --------- Kolej gracza: " + str(player))
-    print(df['Players'][x] + " " + df['Values'][x] + "   vs.   " + df['Players'][y] + " ??? mln € ")
+    print(df['Players'][x] + " " + str(df['Values'][x]) + " mln €   vs.   " + df['Players'][y] + " ??? mln € ")
     print("Czy " + df["Players"][y] + " jest drozszy (D)/ tanszy (T)/ ma taka sama wartosc (S) jak " + df["Players"][x])
 
     #obsluga bledu wyboru
@@ -134,22 +140,26 @@ while len(excluded_values) < len(df['Players']): #dopóki nie wyczerpie sie licz
 
     #sprawdzenie wyboru
     if (choice == "D" and df["Values"][x] < df["Values"][y]) or (choice == "S" and (df["Values"][x] == df["Values"][y])) or (choice == "T" and df["Values"][x] > df["Values"][y]): #jesli dobry wybor
-        points += 1
-        print("Zdobywasz punkt! " + df['Players'][y] + " jest warty " + df['Values'][y] + " Twoja ilosc punktow to: " + str(points) + "\n")
+        points[player-1] += 1
+        print("Zdobywasz punkt! " + df['Players'][y] + " jest warty " + str(df['Values'][y]) + " mln €. Twoja ilosc punktow to: " + str(points[player-1]) + "\n")
     else: #jesli zly wybor
-        print("Koniec gry :( " + df['Players'][y] + " jest warty " + df['Values'][y] + " Zdobyles lacznie: " + str(points) + " punktow\n")
+        print("Zla odpowiedz! :( " + df['Players'][y] + " jest warty " + str(df['Values'][y]) + " mln €. Zdobyles lacznie: " + str(points[player-1]) + " punktow\n")
 
-    if player == 4:
+    if rounds == rounds_choice:
+        break
+
+    if player == num_players:
         rounds += 1
+
+    print(points)
 
     i += 1
 
 
 
+#26.07 - zawodnicy i ich wlasne punkty
+#27.07 - tablica wyników i poprawić rundy, zeby nie konczyly sie na 1 zawodniku :)
 
 #najlepszy wynik
-#maksymalna ilosc rund
-#gracze
 #stop gry
 
-'''
