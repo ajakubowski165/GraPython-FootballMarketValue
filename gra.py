@@ -115,6 +115,11 @@ points = [0] * num_players
 
 while len(excluded_values) < len(df['Players']): #dopóki nie wyczerpie sie liczba wykorzystanych zawodników
 
+    if rounds == rounds_choice:
+        print("Koniec gry! Wyniki prezentuja sie nastepujaco: ")
+        print(points)
+        break
+
     player = (i % (num_players)) + 1
 
     x = random.randint(0, len(df['Players']) - 1) #losujemy liczbe
@@ -144,9 +149,6 @@ while len(excluded_values) < len(df['Players']): #dopóki nie wyczerpie sie licz
         print("Zdobywasz punkt! " + df['Players'][y] + " jest warty " + str(df['Values'][y]) + " mln €. Twoja ilosc punktow to: " + str(points[player-1]) + "\n")
     else: #jesli zly wybor
         print("Zla odpowiedz! :( " + df['Players'][y] + " jest warty " + str(df['Values'][y]) + " mln €. Zdobyles lacznie: " + str(points[player-1]) + " punktow\n")
-
-    if rounds == rounds_choice:
-        break
 
     if player == num_players:
         rounds += 1
