@@ -14,6 +14,7 @@ headers = {'User-Agent':
            'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.106 Safari/537.36'}
 
 
+
 #tworzymy puste listy pilkarzy oraz ich wartosci
 PlayersList = []
 ValuesList = []
@@ -39,10 +40,12 @@ for pagenum in range(1, 11):
 #tworzymy ramke danych
 df = pd.DataFrame({"Players":PlayersList,"Values":ValuesList})
 
+print(df)
+
 # Usunięcie zbędnych znaków i konwersja na typ int
 df['Values'] = df['Values'].str.replace(' mln €', '').str.replace(',', '.').astype(float).astype(int)
 
-
+print(df)
 
 #algorytm gry - nagła śmierć
 #pusta lista wykluczonych wartosci
