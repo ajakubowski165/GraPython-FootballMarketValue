@@ -25,6 +25,7 @@ for pagenum in range(1, 11):
     for i in range(0, 25):
         ValuesList.append(Values[i].text)
 
+
 df = pd.DataFrame({"Players": PlayersList, "Values": ValuesList})
 df['Values'] = df['Values'].str.replace(' mln €', '').str.replace(',', '.').astype(float).astype(int)
 
@@ -50,16 +51,18 @@ def play_round():
     )
     message_label.config(text=message)
 
+
     # Destroy previous buttons
     for button in root.winfo_children():
         if isinstance(button, tk.Button):
             button.destroy()
 
+
     # Create buttons for user choice
-    play_round_button = tk.Button(root, text="More Expensive", command=lambda: evaluate_choice("yes"))
+    play_round_button = tk.Button(root, text=df['Players'][y], command=lambda: evaluate_choice("yes"))
     play_round_button.pack(pady=10)
 
-    play_round_button = tk.Button(root, text="Cheaper", command=lambda: evaluate_choice("no"))
+    play_round_button = tk.Button(root, text=df['Players'][x], command=lambda: evaluate_choice("no"))
     play_round_button.pack(pady=10)
 
     same_value_button = tk.Button(root, text="Same Value", command=lambda: evaluate_choice("same"))
@@ -80,10 +83,11 @@ def play_round():
         rounds += 1
         play_round()  # Proceed to the next round
 
+
 root = tk.Tk()
 root.title("Player Value Game")
 
-message_label = tk.Label(root, text="")
+message_label = tk.Label(root, text="Witaj w grze!")
 message_label.pack(pady=20)
 
 play_button = tk.Button(root, text="Play Round", command=play_round)
