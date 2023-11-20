@@ -1,5 +1,4 @@
-"""
-
+'''
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd
@@ -32,7 +31,7 @@ df = pd.DataFrame({"Players": PlayersList, "Values": ValuesList})
 df['Values'] = df['Values'].str.replace(' mln €', '').str.replace(',', '.').astype(float).astype(int)
 
 # Game logic with Tkinter
-def play_round():
+def sudden_death():
     global rounds, points
 
     x = random.randint(0, len(df['Players']) - 1)
@@ -84,7 +83,7 @@ def play_round():
             root.quit()  # Terminate the Tkinter main loop
 
         rounds += 1
-        play_round()  # Proceed to the next round
+        sudden_death()  # Proceed to the next round
 
 
 root = tk.Tk()
@@ -93,7 +92,7 @@ root.title("Player Value Game")
 message_label = tk.Label(root, text="Witaj w grze!")
 message_label.pack(pady=20)
 
-play_button = tk.Button(root, text="Play Round", command=play_round)
+play_button = tk.Button(root, text="Nagla smierc", command=sudden_death)
 play_button.pack(pady=20)
 
 rounds = 1
@@ -103,7 +102,7 @@ excluded_values = []
 root.mainloop()
 
 
-
+"""
 
 #algorytm gry - rundy i gracze
 
@@ -182,8 +181,8 @@ while len(excluded_values) < len(df['Players']): #dopóki nie wyczerpie sie licz
 #stop gry
 
 """
-
-
+"""
+'''
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd
@@ -213,20 +212,26 @@ for pagenum in range(1, 11):
 
 df = pd.DataFrame({"Players": PlayersList, "Values": ValuesList})
 df['Values'] = df['Values'].str.replace(' mln €', '').str.replace(',', '.').astype(float).astype(int)
+
+
 excluded_values = []
 rounds = 0
 i = 0
+points = 0
+
+def start_multiplayer():
+    global rounds, i, rounds_choice, num_players, points
+    rounds_choice = simpledialog.askinteger("Input", 'Wpisz liczbe rund od 1 do 50: ', minvalue=1, maxvalue=50)
+    num_players = simpledialog.askinteger("Input", 'Wpisz liczbe graczy od 2 do 10: ', minvalue=2, maxvalue=10)
+    points = [0] * num_players
+    multiplayer()
 
 
-def show_result():
-    messagebox.showinfo("Game Over", "Koniec gry! Wyniki prezentuja sie nastepujaco:\n" + str(points))
-
-
-def play_round():
-    global i, rounds
+def multiplayer():
+    global i, rounds, rounds_choice, num_players, points
 
     if rounds == rounds_choice:
-        show_result()
+        messagebox.showinfo("Game Over", "Koniec gry! Wyniki prezentuja sie nastepujaco:\n" + str(points))
         return
 
     player = (i % (num_players)) + 1
@@ -258,16 +263,76 @@ def play_round():
         rounds += 1
 
     i += 1
-    play_round()
+    multiplayer()
+
+
+
+def sudden_death():
+    global rounds, points
+
+    x = random.randint(0, len(df['Players']) - 1)
+    while x in excluded_values:
+        x = random.randint(0, len(df['Players']) - 1)
+    excluded_values.append(x)
+
+    y = random.randint(0, len(df['Players']) - 1)
+    while y in excluded_values:
+        y = random.randint(0, len(df['Players']) - 1)
+    excluded_values.append(y)
+
+    # Display players and create buttons for user choice
+    message = (
+        "Round " + str(rounds) + "\n" +
+        df['Players'][x] + " " + str(df['Values'][x]) + " mln €   vs.   " + df['Players'][y] + " ??? mln €\n" +
+        "Is " + df["Players"][y] + " more expensive (Yes)/ cheaper (No)/ has the same value (Same) as " + df["Players"][x]
+    )
+    message_label.config(text=message)
+
+
+    # Destroy previous buttons
+    for button in root.winfo_children():
+        if isinstance(button, tk.Button):
+            button.destroy()
+
+
+    # Create buttons for user choice
+    play_round_button = tk.Button(root, text=df['Players'][y], command=lambda: evaluate_choice("yes"))
+    play_round_button.pack(pady=10)
+
+    play_round_button = tk.Button(root, text=df['Players'][x], command=lambda: evaluate_choice("no"))
+    play_round_button.pack(pady=10)
+
+    same_value_button = tk.Button(root, text="Same Value", command=lambda: evaluate_choice("same"))
+    same_value_button.pack(pady=10)
+
+
+    def evaluate_choice(choice):
+        global rounds, points
+
+        if (choice == "yes" and df["Values"][x] < df["Values"][y]) or \
+           (choice == "no" and df["Values"][x] > df["Values"][y]) or \
+           (choice == "same" and df["Values"][x] == df["Values"][y]):
+            points += 1
+            messagebox.showinfo("Correct", "You earned a point! " + df['Players'][y] + " is worth " + str(df['Values'][y]) + " mln €.\nYour total points: " + str(points))
+        else:
+            messagebox.showinfo("Game Over", "Game over :( " + df['Players'][y] + " is worth " + str(df['Values'][y]) + " mln €.\nTotal points: " + str(points))
+            root.quit()  # Terminate the Tkinter main loop
+
+        rounds += 1
+        sudden_death()  # Proceed to the next round
+
 
 
 root = tk.Tk()
-root.withdraw()
+root.title("Player Value Game")
 
-rounds_choice = simpledialog.askinteger("Input", 'Wpisz liczbe rund od 1 do 50: ', minvalue=1, maxvalue=50)
+message_label = tk.Label(root, text="Witaj w grze!")
+message_label.pack(pady=20)
 
-num_players = simpledialog.askinteger("Input", 'Wpisz liczbe graczy od 2 do 10: ', minvalue=2, maxvalue=10)
+play_button = tk.Button(root, text="Nagla smierc", command=sudden_death)
+play_button.pack(pady=20)
 
-points = [0] * num_players
+play_multiplayer_button = tk.Button(root, text="Nagla smierc", command=start_multiplayer)
+play_multiplayer_button.pack(pady=20)
 
-play_round()
+root.mainloop()
