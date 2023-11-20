@@ -5,6 +5,7 @@ import pandas as pd
 import random
 import tkinter as tk
 from tkinter import messagebox, simpledialog
+from PIL import Image, ImageTk
 
 #___________________________________________________ Webscraping i obrobka danych
 
@@ -12,6 +13,7 @@ headers = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KH
 
 PlayersList = []
 ValuesList = []
+ImagesList = []
 
 for pagenum in range(1, 11):
     page = "https://www.transfermarkt.pl/spieler-statistik/wertvollstespieler/marktwertetop?ajax=yw1&page=" + str(pagenum)
@@ -20,14 +22,19 @@ for pagenum in range(1, 11):
 
     Players = pageSoup.find_all("td", {"class": "hauptlink"})
     Values = pageSoup.find_all("td", {"class": "rechts hauptlink"})
+    Images = pageSoup.find_all("img", {"class": "bilderrahmen-fixed"})
 
     for i in range(0, 50, 2):
         PlayersList.append(Players[i].text)
     for i in range(0, 25):
         ValuesList.append(Values[i].text)
+    for img in Images:
+        ImagesList.append(img.get('src'))
 
-df = pd.DataFrame({"Players": PlayersList, "Values": ValuesList})
+df = pd.DataFrame({"Players": PlayersList, "Values": ValuesList, "Images": ImagesList})
 df['Values'] = df['Values'].str.replace(' mln €', '').str.replace(',', '.').astype(float).astype(int)
+
+print(df['Images'][2])
 
 
 #___________________________________________________ Zmienne do obu trybow
