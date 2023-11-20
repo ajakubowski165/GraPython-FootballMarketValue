@@ -5,7 +5,7 @@ import pandas as pd
 import random
 import tkinter as tk
 from tkinter import messagebox, simpledialog
-from PIL import Image, ImageTk
+from PIL import Image, ImageTk, ImageFilter
 
 #___________________________________________________ Webscraping i obrobka danych
 
@@ -22,19 +22,14 @@ for pagenum in range(1, 11):
 
     Players = pageSoup.find_all("td", {"class": "hauptlink"})
     Values = pageSoup.find_all("td", {"class": "rechts hauptlink"})
-    Images = pageSoup.find_all("img", {"class": "bilderrahmen-fixed"})
 
     for i in range(0, 50, 2):
         PlayersList.append(Players[i].text)
     for i in range(0, 25):
         ValuesList.append(Values[i].text)
-    for img in Images:
-        ImagesList.append(img.get('src'))
 
-df = pd.DataFrame({"Players": PlayersList, "Values": ValuesList, "Images": ImagesList})
+df = pd.DataFrame({"Players": PlayersList, "Values": ValuesList})
 df['Values'] = df['Values'].str.replace(' mln €', '').str.replace(',', '.').astype(float).astype(int)
-
-print(df['Images'][2])
 
 
 #___________________________________________________ Zmienne do obu trybow
@@ -132,11 +127,12 @@ def multiplayer():
         y = random.randint(0, len(df['Players']) - 1)
     excluded_values.append(y)
 
+
     # Display players and create buttons for user choice
     message = (
-        "Round " + str(rounds) + "! Player" + str(player) + "\n" +
-        df['Players'][x] + " " + str(df['Values'][x]) + " mln €   vs.   " + df['Players'][y] + " ??? mln €\n" +
-        "Is " + df["Players"][y] + " more expensive (Yes)/ cheaper (No)/ has the same value (Same) as " + df["Players"][x]
+            "Round " + str(rounds) + "! Player" + str(player) + "\n" +
+            df['Players'][x] + " " + str(df['Values'][x]) + " mln €   vs.   " + df['Players'][y] + " ??? mln €\n" +
+            "Is " + df["Players"][y] + " more expensive (Yes)/ cheaper (No)/ has the same value (Same) as " + df["Players"][x]
     )
     message_label.config(text=message)
 
