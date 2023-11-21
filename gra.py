@@ -5,7 +5,6 @@ import pandas as pd
 import random
 import tkinter as tk
 from tkinter import messagebox, simpledialog
-from PIL import Image, ImageTk, ImageFilter
 
 #___________________________________________________ Webscraping i obrobka danych
 
@@ -54,11 +53,14 @@ def sudden_death():
         y = random.randint(0, len(df['Players']) - 1)
     excluded_values.append(y)
 
+     # Ustaw rozmiar okna na 480x480
+    root.geometry("600x320")
+
     # Display players and create buttons for user choice
     message = (
         "Round " + str(rounds) + "\n" +
         df['Players'][x] + " " + str(df['Values'][x]) + " mln €   vs.   " + df['Players'][y] + " ??? mln €\n" +
-        "Is " + df["Players"][y] + " more expensive (Yes)/ cheaper (No)/ has the same value (Same) as " + df["Players"][x]
+        "Kto jest drozszy? "
     )
     message_label.config(text=message)
 
@@ -68,15 +70,17 @@ def sudden_death():
         if isinstance(button, tk.Button):
             button.destroy()
 
+    button_font = ("Trebuchet MS", 12)
+    button_bg_color = '#add8e6'
 
     # Create buttons for user choice
-    play_round_button = tk.Button(root, text=df['Players'][y], command=lambda: evaluate_choice("yes"))
+    play_round_button = tk.Button(root, text=df['Players'][y], command=lambda: evaluate_choice("yes"), font=button_font, bg=button_bg_color)
     play_round_button.pack(pady=10)
 
-    play_round_button = tk.Button(root, text=df['Players'][x], command=lambda: evaluate_choice("no"))
+    play_round_button = tk.Button(root, text=df['Players'][x], command=lambda: evaluate_choice("no"), font=button_font, bg=button_bg_color)
     play_round_button.pack(pady=10)
 
-    same_value_button = tk.Button(root, text="Same Value", command=lambda: evaluate_choice("same"))
+    same_value_button = tk.Button(root, text="Same Value", command=lambda: evaluate_choice("same"), font=button_font, bg=button_bg_color)
     same_value_button.pack(pady=10)
 
 
@@ -87,9 +91,9 @@ def sudden_death():
            (choice == "no" and df["Values"][x] > df["Values"][y]) or \
            (choice == "same" and df["Values"][x] == df["Values"][y]):
             points += 1
-            messagebox.showinfo("Correct", "You earned a point! " + df['Players'][y] + " is worth " + str(df['Values'][y]) + " mln €.\nYour total points: " + str(points))
+            messagebox.showinfo("Correct", "Zdobywasz punkt! " + df['Players'][y] + " jest warty " + str(df['Values'][y]) + " mln €.\nTwoja liczba punktow: " + str(points))
         else:
-            messagebox.showinfo("Game Over", "Game over :( " + df['Players'][y] + " is worth " + str(df['Values'][y]) + " mln €.\nTotal points: " + str(points))
+            messagebox.showinfo("Game Over", "Koniec gry :( " + df['Players'][y] + " jest warty " + str(df['Values'][y]) + " mln €.\nZdobyles lacznie: " + str(points) + " punktow")
             root.quit()  # Terminate the Tkinter main loop
 
         rounds += 1
@@ -128,11 +132,16 @@ def multiplayer():
     excluded_values.append(y)
 
 
+     # Ustaw rozmiar okna na 480x480
+    root.geometry("600x320")
+
+    round_counting = rounds + 1
+
     # Display players and create buttons for user choice
     message = (
-            "Round " + str(rounds) + "! Player" + str(player) + "\n" +
-            df['Players'][x] + " " + str(df['Values'][x]) + " mln €   vs.   " + df['Players'][y] + " ??? mln €\n" +
-            "Is " + df["Players"][y] + " more expensive (Yes)/ cheaper (No)/ has the same value (Same) as " + df["Players"][x]
+        "Runda " + str(round_counting) + " | Kolej gracza " + str(player) + "\n" +
+        df['Players'][x] + " " + str(df['Values'][x]) + " mln €   vs.   " + df['Players'][y] + " ??? mln €\n" +
+        "Kto jest drozszy? "
     )
     message_label.config(text=message)
 
@@ -141,14 +150,18 @@ def multiplayer():
         if isinstance(button, tk.Button):
             button.destroy()
 
+
+    button_font = ("Trebuchet MS", 12)
+    button_bg_color = '#add8e6'
+
     # Create buttons for user choice
-    play_round_button = tk.Button(root, text=df['Players'][y], command=lambda: evaluate_choice("yes"))
+    play_round_button = tk.Button(root, text=df['Players'][y], command=lambda: evaluate_choice("yes"), font=button_font, bg=button_bg_color)
     play_round_button.pack(pady=10)
 
-    play_round_button = tk.Button(root, text=df['Players'][x], command=lambda: evaluate_choice("no"))
+    play_round_button = tk.Button(root, text=df['Players'][x], command=lambda: evaluate_choice("no"), font=button_font, bg=button_bg_color)
     play_round_button.pack(pady=10)
 
-    same_value_button = tk.Button(root, text="Same Value", command=lambda: evaluate_choice("same"))
+    same_value_button = tk.Button(root, text="Same Value", command=lambda: evaluate_choice("same"), font=button_font, bg=button_bg_color)
     same_value_button.pack(pady=10)
     
     def evaluate_choice(choice):
@@ -176,13 +189,23 @@ def multiplayer():
 root = tk.Tk()
 root.title("Player Value Game")
 
-message_label = tk.Label(root, text="Witaj w grze!")
+# Ustaw rozmiar okna na 480x480
+root.geometry("600x320")
+
+main_text_font = ("Trebuchet MS", 14)
+message_label = tk.Label(root, text="Witaj w grze!", font=main_text_font)
 message_label.pack(pady=20)
 
-play_button = tk.Button(root, text="Singleplayer", command=sudden_death)
+button_font = ("Trebuchet MS", 12)
+button_bg_color = '#add8e6'
+
+play_button = tk.Button(root, text="Singleplayer", command=sudden_death, font=button_font, bg=button_bg_color)
 play_button.pack(pady=20)
 
-play_multiplayer_button = tk.Button(root, text="Multiplayer", command=start_multiplayer)
+play_multiplayer_button = tk.Button(root, text="Multiplayer", command=start_multiplayer, font=button_font, bg=button_bg_color)
 play_multiplayer_button.pack(pady=20)
 
 root.mainloop()
+
+
+#tabela wynikow multiplayer
