@@ -101,21 +101,29 @@ def sudden_death():
 
 
 #___________________________________________________ Multiplayer
+users_names = []
 
 def start_multiplayer():
-    global rounds, i, rounds_choice, num_players, points
+    global rounds, i, rounds_choice, num_players, points, users_names
     rounds_choice = simpledialog.askinteger("Input", 'Wpisz liczbe rund od 1 do 50: ', minvalue=1, maxvalue=50)
     num_players = simpledialog.askinteger("Input", 'Wpisz liczbe graczy od 2 do 10: ', minvalue=2, maxvalue=10)
     points = [0] * num_players
     rounds = 0
+
+    # Utwórz listę z imionami graczy
+    for player in range(1, num_players + 1):
+        user_name = simpledialog.askstring("Input", f'Wpisz imię gracza {player}: ')
+        users_names.append(user_name)
+
     multiplayer()
 
 
 def multiplayer():
-    global i, rounds, rounds_choice, num_players, points
+    global i, rounds, rounds_choice, num_players, points, users_names
 
     if rounds == rounds_choice:
-        messagebox.showinfo("Game Over", "Koniec gry! Wyniki prezentuja sie nastepujaco:\n" + str(points))
+        results = "\n".join([f"{users_names[player]}: {points[player]}" for player in range(num_players)])
+        messagebox.showinfo("Game Over", "Koniec gry! Wyniki prezentują się następująco:\n" + results)
         root.quit()
         return
 
@@ -131,17 +139,16 @@ def multiplayer():
         y = random.randint(0, len(df['Players']) - 1)
     excluded_values.append(y)
 
-
-     # Ustaw rozmiar okna na 480x480
+    # Ustaw rozmiar okna na 600x320
     root.geometry("600x320")
 
     round_counting = rounds + 1
 
     # Display players and create buttons for user choice
     message = (
-        "Runda " + str(round_counting) + " | Kolej gracza " + str(player) + "\n" +
-        df['Players'][x] + " " + str(df['Values'][x]) + " mln €   vs.   " + df['Players'][y] + " ??? mln €\n" +
-        "Kto jest drozszy? "
+        f"Runda {round_counting} | Kolej gracza {users_names[player - 1]}\n" +
+        f"{df['Players'][x]} {df['Values'][x]} mln €   vs.   {df['Players'][y]} ??? mln €\n" +
+        "Kto jest droższy? "
     )
     message_label.config(text=message)
 
@@ -149,7 +156,6 @@ def multiplayer():
     for button in root.winfo_children():
         if isinstance(button, tk.Button):
             button.destroy()
-
 
     button_font = ("Trebuchet MS", 12)
     button_bg_color = '#add8e6'
@@ -163,7 +169,7 @@ def multiplayer():
 
     same_value_button = tk.Button(root, text="Same Value", command=lambda: evaluate_choice("same"), font=button_font, bg=button_bg_color)
     same_value_button.pack(pady=10)
-    
+
     def evaluate_choice(choice):
         global rounds, points, i
 
@@ -171,11 +177,9 @@ def multiplayer():
            (choice == "no" and df["Values"][x] > df["Values"][y]) or \
            (choice == "same" and df["Values"][x] == df["Values"][y]):
             points[player - 1] += 1
-            messagebox.showinfo("Correct", "Zdobywasz punkt! " + df['Players'][y] + " jest warty " + str(
-                df['Values'][y]) + " mln €. Twoja ilosc punktow to: " + str(points[player - 1]))
+            messagebox.showinfo("Correct", f"Zdobywasz punkt! {df['Players'][y]} jest wart {df['Values'][y]} mln €. Twoja ilość punktów to: {points[player - 1]}")
         else:
-           messagebox.showinfo("Incorrect", "Zla odpowiedz! :( " + df['Players'][y] + " jest warty " + str(
-            df['Values'][y]) + " mln €. Zdobyles lacznie: " + str(points[player - 1]) + " punktow")
+            messagebox.showinfo("Incorrect", f"Zła odpowiedź! :( {df['Players'][y]} jest wart {df['Values'][y]} mln €. Zdobyłeś lacznie: {points[player - 1]} punktów")
 
         if player == num_players:
             rounds += 1
@@ -207,5 +211,3 @@ play_multiplayer_button.pack(pady=20)
 
 root.mainloop()
 
-
-#tabela wynikow multiplayer
