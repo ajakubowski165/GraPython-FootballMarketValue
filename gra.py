@@ -140,7 +140,10 @@ def multiplayer():
     excluded_values.append(y)
 
     # Ustaw rozmiar okna na 600x320
-    root.geometry("600x320")
+    root.geometry("600x500")
+    if(num_players > 7):
+        root.geometry("600x700")
+    
 
     round_counting = rounds + 1
 
@@ -170,6 +173,8 @@ def multiplayer():
     same_value_button = tk.Button(root, text="Same Value", command=lambda: evaluate_choice("same"), font=button_font, bg=button_bg_color)
     same_value_button.pack(pady=10)
 
+    update_score_label()
+    
     def evaluate_choice(choice):
         global rounds, points, i
 
@@ -177,9 +182,9 @@ def multiplayer():
            (choice == "no" and df["Values"][x] > df["Values"][y]) or \
            (choice == "same" and df["Values"][x] == df["Values"][y]):
             points[player - 1] += 1
-            messagebox.showinfo("Correct", f"Zdobywasz punkt! {df['Players'][y]} jest wart {df['Values'][y]} mln €. Twoja ilość punktów to: {points[player - 1]}")
+            messagebox.showinfo("Correct", f"Zdobywasz punkt! {df['Players'][y]} jest wart {df['Values'][y]} mln €.\n{users_names[player - 1]}, twoja aktualna ilość punktów to: {points[player - 1]}")
         else:
-            messagebox.showinfo("Incorrect", f"Zła odpowiedź! :( {df['Players'][y]} jest wart {df['Values'][y]} mln €. Zdobyłeś lacznie: {points[player - 1]} punktów")
+            messagebox.showinfo("Incorrect", f"Zła odpowiedź! :( {df['Players'][y]} jest wart {df['Values'][y]} mln €.\n{users_names[player - 1]}, zdobyłeś łącznie dotychczas: {points[player - 1]} punktów")
 
         if player == num_players:
             rounds += 1
@@ -187,6 +192,11 @@ def multiplayer():
         i += 1
         multiplayer()  # Proceed to the next round
     
+def update_score_label():
+    global points, users_names
+    scores = "\n".join([f"{users_names[player]}: {points[player]}" for player in range(num_players)])
+    score_label.config(text=scores)
+
 
 #___________________________________________________ Tworzenie okien dialogowych
 
@@ -202,6 +212,9 @@ message_label.pack(pady=20)
 
 button_font = ("Trebuchet MS", 12)
 button_bg_color = '#add8e6'
+
+score_label = tk.Label(root, text="", font=main_text_font)
+score_label.pack(pady=10)
 
 play_button = tk.Button(root, text="Singleplayer", command=sudden_death, font=button_font, bg=button_bg_color)
 play_button.pack(pady=20)
